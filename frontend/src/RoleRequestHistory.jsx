@@ -58,10 +58,8 @@ function RoleRequestHistory() {
   return (
     <div className="container py-5 d-flex justify-content-center">
 
-      {/* CENTER WRAPPER (60%) */}
       <div className="w-100" style={{ maxWidth: "60%" }}>
 
-        {/* HEADER */}
         <div className="d-flex justify-content-between align-items-start mb-4">
 
           <div>

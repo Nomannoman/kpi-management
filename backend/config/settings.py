@@ -140,7 +140,7 @@ REST_FRAMEWORK = {
 }
 
 from datetime import timedelta
-
+ACCESS_HOURS = 2
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=ACCESS_HOURS),
 }

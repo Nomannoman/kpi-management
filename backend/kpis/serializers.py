@@ -29,9 +29,9 @@ class KPISerializer(serializers.ModelSerializer):
             "owner",
             "owner_id",
             "owner_name",
+            "is_min_kpi",
         ]
 
-        # 🔥 IMPORTANT FIX
         read_only_fields = [
             "project",
             "owner",

@@ -44,7 +44,6 @@ class UserListView(ListAPIView):
             ]
             return self.get_paginated_response(data)
 
-        # fallback (rare case)
         data = [
             {
                 "id": u.id,
@@ -58,10 +57,6 @@ class UserListView(ListAPIView):
 
         return Response(data)
 
-
-# ==========================================
-# USER DETAIL UPDATE (ADMIN ONLY)
-# ==========================================
 
 class UserDetailView(APIView):
     permission_classes = [IsAdmin]
@@ -81,10 +76,6 @@ class UserDetailView(APIView):
         return Response({"message": "Updated successfully"})
 
 
-# ==========================================
-# LOGIN
-# ==========================================
-
 class LoginView(APIView):
 
     authentication_classes = []
@@ -102,31 +93,32 @@ class LoginView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# ==========================================
-# SIGNUP
-# ==========================================
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class SignupView(APIView):
 
     def post(self, request):
-
         serializer = SignupSerializer(data=request.data)
-
         if serializer.is_valid():
-
-            serializer.save()
-
+            is_first_user = User.objects.count() == 0
+            user = serializer.save()
+            if is_first_user:
+                user.profile.role = "ADMIN"
+                user.profile.save()
             return Response(
-                {"message": "User created successfully"},
+                {
+                    "message": "User created successfully",
+                    "role": "ADMIN" if is_first_user else user.profile.role
+                },
                 status=status.HTTP_201_CREATED
             )
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-# ==========================================
-# ME API
-# ==========================================
 
 class MeView(APIView):
 
@@ -144,10 +136,6 @@ class MeView(APIView):
             "role": profile.role
         })
 
-
-# ==========================================
-# ROLE REQUEST (USER SIDE)
-# ==========================================
 
 class RoleRequestView(APIView):
 
@@ -197,10 +185,6 @@ class ActiveRoleRequestView(APIView):
             "status": req.status
         })
 
-
-# ==========================================
-# ADMIN ROLE REQUEST MANAGEMENT
-# ==========================================
 
 class RoleRequestsView(APIView):
 
@@ -266,10 +250,6 @@ class RejectRoleRequestView(APIView):
         return Response({"message": "Role request rejected"})
 
 
-# ==========================================
-# ROLE REQUEST HISTORY
-# ==========================================
-
 class RoleRequestHistoryView(APIView):
 
     permission_classes = [IsAdmin]
@@ -302,10 +282,6 @@ class RoleRequestHistoryView(APIView):
 
         return Response(data)
 
-
-# ==========================================
-# HEALTH CHECK
-# ==========================================
 
 class HealthCheckView(APIView):
 

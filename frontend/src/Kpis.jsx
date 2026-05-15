@@ -164,7 +164,7 @@ function Kpis() {
             <div className="card-body">
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
                 <h5 className="fw-bold mb-0">KPI Records</h5>
-                <div className="flex-grow-1 mx-sm-3" style={{ maxWidth: '300px' }}>
+                <div className="flex-grow-1 mx-sm-3" >
                   <input
                     type="text"
                     className="form-control"
@@ -188,9 +188,20 @@ function Kpis() {
                 <div className="text-center py-5 text-muted">No KPI records available.</div>
               ) : (
                 currentKpis.map((kpi, index) => {
-                  const percentage = kpi.target_value > 0
-                    ? Math.min(Math.round((kpi.current_value / kpi.target_value) * 100), 100)
-                    : 0;
+                  let percentage = 0;
+
+                  const current = Number(kpi.current_value) || 0;
+                  const target = Number(kpi.target_value) || 0;
+
+                  if (target > 0 && current > 0) {
+                    if (kpi.is_min_kpi) {
+                      percentage = (target / current) * 100;
+                    } else {
+                      percentage = (current / target) * 100;
+                    }
+
+                    percentage = Math.min(Math.round(percentage), 100);
+                  }
                   return (
                     <div key={kpi.id || index} className="border rounded bg-light p-3 mb-3">
                       <div className="d-flex justify-content-between align-items-start">
@@ -198,7 +209,7 @@ function Kpis() {
                           <h6 className="fw-bold mb-1">{kpi.originalIndex}. {kpi.name}</h6>
                           <small className="text-primary d-block mb-2">Project: {kpi.project_name}</small>
                           <p className="text-muted small mb-2">{kpi.description}</p>
-                          <small className="text-secondary d-block mb-3">Owner: {kpi.owner}</small>
+                          <small className="text-secondary d-block mb-3">Owner: {kpi.owner_name}</small>
                           <div className="d-flex gap-4 small mb-2">
                             <span><strong>Current:</strong> {kpi.current_value}</span>
                             <span><strong>Target:</strong> {kpi.target_value}</span>

@@ -67,7 +67,6 @@ function RoleChangeRequests() {
 
             <div className="w-100" style={{ maxWidth: "60%" }}>
 
-                {/* HEADER */}
                 <div className="d-flex justify-content-between align-items-start mb-4">
 
                     <div>
@@ -90,14 +89,12 @@ function RoleChangeRequests() {
 
                 </div>
 
-                {/* STATUS */}
                 {status.text && (
                     <div className={`alert alert-${status.type}`}>
                         {status.text}
                     </div>
                 )}
 
-                {/* LOADING */}
                 {loading ? (
                     <div className="text-center py-5">
                         <div className="spinner-border text-primary" />
@@ -113,7 +110,6 @@ function RoleChangeRequests() {
                     </div>
                 ) : (
                     <>
-                        {/* REQUEST LIST */}
                         {paginatedRequests.map((request) => (
                             <div
                                 key={request.id}
@@ -121,13 +117,10 @@ function RoleChangeRequests() {
                             >
                                 <div className="card-body">
 
-                                    {/* TOP ROW */}
                                     <div className="d-flex justify-content-between align-items-center">
 
-                                        {/* LEFT */}
                                         <div className="flex-grow-1">
 
-                                            {/* NAME + USERNAME */}
                                             <div className="d-flex align-items-center gap-2 mb-2">
 
                                                 <h5 className="mb-0 fw-semibold">
@@ -140,7 +133,6 @@ function RoleChangeRequests() {
 
                                             </div>
 
-                                            {/* ROLE COMPARISON */}
                                             <div className="d-flex align-items-center gap-2">
 
                                                 <span className="badge bg-secondary px-3 py-2">
@@ -156,7 +148,6 @@ function RoleChangeRequests() {
                                             </div>
                                         </div>
 
-                                        {/* ACTIONS */}
                                         <div className="d-flex gap-2">
 
                                             <button
@@ -184,7 +175,6 @@ function RoleChangeRequests() {
                             </div>
                         ))}
 
-                        {/* PAGINATION */}
                         <div className="d-flex justify-content-center align-items-center gap-3 mt-4">
 
                             <button

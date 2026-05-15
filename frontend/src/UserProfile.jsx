@@ -81,19 +81,45 @@ function UserProfile() {
   return (
     <div className="container-fluid min-vh-100 bg-light py-4">
       <div className="d-flex flex-column align-items-center justify-content-center">
-        <div className="w-100 mb-3" style={{ maxWidth: "500px" }}>
+        <div
+          className="w-100 mb-3 d-flex justify-content-between align-items-center"
+          style={{ maxWidth: "500px" }}
+        >
           <button
-            className="btn btn-link text-decoration-none text-secondary fw-semibold"
+            className="btn btn-link text-decoration-none text-secondary fw-semibold p-0"
             onClick={() => navigate("/")}
           >
             {"← Home"}
           </button>
+
+
         </div>
 
         <div className="card shadow-sm border-0 p-4 w-100" style={{ maxWidth: "500px" }}>
           <div className="card-body p-0">
-            <h2 className="h4 fw-bold text-dark mb-1">User Profile</h2>
-            <p className="small text-muted mb-4">View account details and manage system permissions.</p>
+            <div className="d-flex justify-content-between align-items-center mb-1">
+              <h2 className="h4 fw-bold text-dark mb-0">
+                User Profile
+              </h2>
+
+              <div className="d-flex gap-2">
+                <button
+                  className="btn btn-outline-primary btn-sm"
+                  onClick={() => navigate("/myprojects")}
+                >
+                  My Projects
+                </button>
+
+                <button
+                  className="btn btn-outline-primary btn-sm"
+                  onClick={() => navigate("/mykpis")}
+                >
+                  My KPIs
+                </button>
+              </div>
+            </div>
+
+            {(user.role === "ADMIN" && <p className="small text-muted mb-4">View account details and manage system permissions.</p>)}
             <hr className="text-muted opacity-25 mb-4" />
 
             <div className="vstack gap-3 mb-4">
@@ -167,15 +193,18 @@ function UserProfile() {
                     Role Change Req. History
                   </button>
                 </div>
+                <button
+                  onClick={() => navigate('/usermanagement')}
+                  className="btn btn-outline-primary w-100 mt-3"
+                >
+                  View and edit all users
+                </button>
               </div>
+
+
             )}
 
-            <button
-              onClick={() => navigate('/usermanagement')}
-              className="btn btn-outline-primary w-100 mt-3"
-            >
-              View and edit all users
-            </button>
+
 
             <button onClick={handleLogout} className="btn btn-outline-danger w-100 mt-3">
               Logout

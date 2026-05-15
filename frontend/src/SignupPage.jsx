@@ -22,28 +22,42 @@ function SignupPage() {
     e.preventDefault();
     setError("");
     setSuccess("");
-
+  
     try {
       setLoading(true);
+  
       await api.post("/api/auth/signup/", formData);
-
+  
       const response = await api.post("/api/auth/login/", {
         username: formData.username,
         password: formData.password,
       });
-
+  
+      const token = response.data.access;
+  
+      console.log("Login response:", response.data);
+  
+      localStorage.setItem("access", token);
+  
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  
+      const me = await api.get("/api/users/me/");
+  
+      localStorage.setItem("user_id", me.data.id);
+      localStorage.setItem("username", me.data.username);
+      localStorage.setItem("first_name", me.data.first_name);
+      localStorage.setItem("last_name", me.data.last_name);
+      localStorage.setItem("role", me.data.role || "VIEWER");
+  
       setSuccess("Account created successfully.");
-      localStorage.setItem("access", response.data.access);
-      localStorage.setItem("username", formData.username);
-      localStorage.setItem("first_name", formData.first_name);
-      localStorage.setItem("last_name", formData.last_name);
-      localStorage.setItem("role", "VIEWER");
-
+  
       setTimeout(() => {
         navigate("/");
       }, 500);
+  
     } catch (error) {
       console.error(error);
+  
       if (error.response?.data?.username) {
         setError(error.response.data.username[0]);
       } else if (error.response?.data?.password) {

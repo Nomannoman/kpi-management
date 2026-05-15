@@ -33,6 +33,7 @@ class KPI(models.Model):
     target_value = models.IntegerField()
     current_value = models.IntegerField()
     status = models.IntegerField(choices=KPI_STATUS_CHOICES, default=ON_TRACK)
+    is_min_kpi = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'kpis'

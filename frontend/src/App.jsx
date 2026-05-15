@@ -17,6 +17,7 @@ import RoleRequestHistory from './RoleRequestHistory';
 import ServerDown from './ServerDown';
 import UserManagement from './UserManagement';
 import MyProjects from './MyProjects';
+import MyKPIs from './MyKPIs';
 
 function App() {
   const [checkingServer, setCheckingServer] = useState(true);
@@ -69,6 +70,7 @@ function App() {
         <Route path="/" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
         <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
         <Route path="/myprojects" element={<ProtectedRoute><MyProjects /></ProtectedRoute>} />
+        <Route path="/mykpis" element={<ProtectedRoute><MyKPIs /></ProtectedRoute>}/>
         <Route path="/projects/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
         <Route path="/kpis" element={<ProtectedRoute><Kpis /></ProtectedRoute>} />
         <Route path="/me" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />

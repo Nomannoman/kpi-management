@@ -90,18 +90,16 @@ function ProjectDetail() {
     setCurrentPage(1);
   }, [debouncedSearchTerm]);
 
-  // 1. Injects absolute serial numbers based on original fetch sequence before filtering
   const kpisWithIndexes = kpis.map((kpi, idx) => ({
     ...kpi,
     absoluteIndex: idx + 1,
   }));
 
-  // 2. Evaluates filters against the newly formatted data array
   const filteredKpis = kpisWithIndexes.filter((kpi) => {
     const searchLower = debouncedSearchTerm.toLowerCase();
     return (
       (kpi.name?.toLowerCase() || "").includes(searchLower) ||
-      (kpi.owner?.toLowerCase() || "").includes(searchLower) ||
+      (kpi.owner_name?.toLowerCase() || "").includes(searchLower) ||
       (kpi.description?.toLowerCase() || "").includes(searchLower)
     );
   });
@@ -180,9 +178,9 @@ function ProjectDetail() {
 
               {isMyProject && (
 
-<div className="badge bg-info-subtle text-secondary border border-info px-3 py-2 fs-6 mb-1">
-* Belongs to you
-</div>
+                <div className="badge bg-info-subtle text-secondary border border-info px-3 py-2 fs-6 mb-1">
+                  * Belongs to you
+                </div>
 
               )}
 
@@ -234,13 +232,16 @@ function ProjectDetail() {
               const target =
                 Number(kpi.target_value) || 0;
 
-              const percentage =
-                target > 0
-                  ? Math.min(
-                    Math.round((current / target) * 100),
-                    100
-                  )
-                  : 0;
+              let percentage = 0;
+
+              if (target > 0) {
+                if (kpi.is_min_kpi) {
+                  percentage = (target / current) * 100;
+                } else {
+                  percentage = (current / target) * 100;
+                }
+                percentage = Math.min(Math.round(percentage), 100);
+              }
 
 
               return (
@@ -252,7 +253,6 @@ function ProjectDetail() {
 
                   <div className="card shadow-sm h-100">
 
-                    {/* HEADER */}
                     <h5 className="card-header bg-light text-secondary">
 
                       {kpi.absoluteIndex}. {kpi.name}
@@ -261,7 +261,6 @@ function ProjectDetail() {
 
                     <div className="card-body">
 
-                      {/* TOP */}
                       <div className="d-flex justify-content-between align-items-center mb-3">
 
                         <h5 className="card-title text-muted mb-0 small">
@@ -284,7 +283,6 @@ function ProjectDetail() {
 
                       </div>
 
-                      {/* DESCRIPTION */}
                       <div className="d-flex justify-content-between align-items-start mb-4">
 
                         <p className="text-dark mb-0">
@@ -293,7 +291,7 @@ function ProjectDetail() {
 
                         {isMyKpi(kpi) && (
                           <div className="text-end">
-                            <div className="badge bg-info-subtle text-secondary border border-info px-3 py-2 fs-6 mb-1">
+                            <div className="badge bg-info-subtle text-secondary border border-info px-3 py-2 fs-6 mb-1 m-2">
                               * Belongs to you
                             </div>
                           </div>
@@ -301,7 +299,6 @@ function ProjectDetail() {
 
                       </div>
 
-                      {/* METRICS */}
                       <div className="p-3 bg-light rounded-3 border">
 
                         <div className="row text-center g-2">
@@ -332,7 +329,6 @@ function ProjectDetail() {
 
                         </div>
 
-                        {/* PROGRESS */}
                         <div className="mt-3">
 
                           <div className="d-flex justify-content-between small text-muted mb-1">
@@ -356,6 +352,10 @@ function ProjectDetail() {
                             />
 
                           </div>
+
+                          <span className="text-muted small">
+                            {kpi.is_min_kpi ? "Reduction Progress" : "Growth Progress"}
+                          </span>
 
                         </div>
 

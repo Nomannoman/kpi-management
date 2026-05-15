@@ -9,8 +9,6 @@ from users.permissions import IsManagerOrAdmin
 from users.models import ADMIN
 
 
-# GET /api/projects/  POST /api/projects/
-# GET /api/projects/<id>/  PUT /api/projects/<id>/  PATCH /api/projects/<id>/  DELETE /api/projects/<id>/
 class ProjectListViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()

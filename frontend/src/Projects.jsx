@@ -15,6 +15,7 @@ function Projects() {
   const debouncedSearch = useDebounce(search, 300);
   const role = localStorage.getItem("role");
   const ITEMS_PER_PAGE = PAGE_SIZE;
+  const [fetchedDataOrNot, setFetchedDataOrNot] = useState(false);
 
   const fetchProjectList = (query = "") => {
     api.get(`/api/projects/?search=${query}`)
@@ -22,7 +23,8 @@ function Projects() {
         setProjects(data.data);
         setCurrentPage(1);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err))
+      .finally(setFetchedDataOrNot(true))
   };
 
   useEffect(() => {
@@ -150,7 +152,7 @@ function Projects() {
             </div>
           )}
 
-          {projects.length === 0 && (
+          {!fetchedDataOrNot && projects.length === 0 && (
             <div className="text-center p-5 border rounded bg-light">
               <p className="text-muted m-0">No active workspace projects found.</p>
             </div>

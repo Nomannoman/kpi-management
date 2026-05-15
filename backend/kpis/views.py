@@ -9,8 +9,6 @@ from users.permissions import IsManagerOrAdmin
 from users.models import ADMIN
 
 
-# GET /api/kpis/  POST /api/kpis/
-# GET /api/kpis/<id>/  PUT /api/kpis/<id>/  PATCH /api/kpis/<id>/  DELETE /api/kpis/<id>/
 class KPIViewSet(viewsets.ModelViewSet):
     serializer_class = KPISerializer
     queryset = KPI.objects.all()

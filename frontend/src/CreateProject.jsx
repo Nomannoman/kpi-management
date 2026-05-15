@@ -8,7 +8,6 @@ import { getOwnerName } from './constants';
 function CreateProject() {
   const navigate = useNavigate();
   const location = useLocation();
-  // EDIT MODE
   const isEdit = location.state?.isEdit || false;
   const projectId = location.state?.projectId;
 
@@ -19,11 +18,12 @@ function CreateProject() {
       description: "",
     }
   );
-  // KPI STATE
   const [kpis, setKpis] = useState(
-    location.state?.kpis || []
+    (location.state?.kpis || []).map(kpi => ({
+      ...kpi,
+      is_min_kpi: kpi.is_min_kpi ?? false
+    }))
   );
-  // HANDLE PROJECT INPUTS
   const handleProjectChange = (e) => {
     const { name, value } = e.target;
     setProject(prev => ({
@@ -31,7 +31,6 @@ function CreateProject() {
       [name]: value
     }));
   };
-  // ADD KPI CARD
   const addKPICard = () => {
     setKpis(prev => [
       ...prev,
@@ -41,11 +40,11 @@ function CreateProject() {
         current_value: '',
         target_value: '',
         owner: getOwnerName(),
-        status: '2'
+        status: '2',
+        is_min_kpi: false
       }
     ]);
   };
-  // REMOVE KPI
   const removeKPICard = (indexToRemove) => {
     setKpis(prev =>
       prev.filter((_, index) =>
@@ -53,7 +52,6 @@ function CreateProject() {
       )
     );
   };
-  // HANDLE KPI CHANGE
   const handleKPIChange = (
     index,
     field,
@@ -71,23 +69,14 @@ function CreateProject() {
       })
     );
   };
-  // SUBMIT
   const handleSubmit = (e) => {
     e.preventDefault();
     const formattedKpis = kpis.map((kpi) => ({
       ...kpi,
-      current_value: parseInt(
-        kpi.current_value,
-        10
-      ),
-      target_value: parseInt(
-        kpi.target_value,
-        10
-      ),
-      status: parseInt(
-        kpi.status,
-        10
-      ),
+      current_value: parseInt(kpi.current_value, 10),
+      target_value: parseInt(kpi.target_value, 10),
+      status: parseInt(kpi.status, 10),
+      is_min_kpi: !!kpi.is_min_kpi 
     }));
     const payload = {
       name: project.name,
@@ -104,8 +93,8 @@ function CreateProject() {
         });
     } else {
       api.post('/api/projects/', payload)
-        .then(() => {
-          navigate('/projects');
+        .then((response) => {
+          navigate(`/projects/${response.data.id}`);
         })
         .catch((error) => {
           console.error('Error creating project:', error);
@@ -116,7 +105,6 @@ function CreateProject() {
     <div className="container-fluid py-5 bg-light min-vh-100">
       <div className="row justify-content-center">
         <div className="col-12 col-md-8 col-lg-7">
-          {/* BREADCRUMB */}
           <nav
             aria-label="breadcrumb"
             className="mb-3"
@@ -140,7 +128,6 @@ function CreateProject() {
               </li>
             </ol>
           </nav>
-          {/* HEADER */}
           <h2 className="mb-2 fw-bold text-dark">
             {isEdit
               ? 'Edit Project'
@@ -152,10 +139,8 @@ function CreateProject() {
               : 'Set up your Project Details and establish baseline tracked KPIs.'}
           </p>
           <form onSubmit={handleSubmit}>
-            {/* PROJECT INFO */}
             <div className="card border-0 shadow-sm mb-4 rounded-3">
               <div className="card-body p-4">
-                {/* PROJECT NAME */}
                 <div className="mb-3">
                   <label className="form-label small text-muted text-uppercase fw-semibold">
                     Project Name
@@ -173,7 +158,6 @@ function CreateProject() {
                     required
                   />
                 </div>
-                {/* PROJECT OWNER */}
                 <div className="mb-3">
                   <label className="form-label small text-muted text-uppercase fw-semibold">
                     Project Owner
@@ -192,7 +176,6 @@ function CreateProject() {
                     disabled
                   />
                 </div>
-                {/* DESCRIPTION */}
                 <div className="mb-0">
                   <label className="form-label small text-muted text-uppercase fw-semibold">
                     Description
@@ -212,7 +195,6 @@ function CreateProject() {
                 </div>
               </div>
             </div>
-            {/* KPI HEADER */}
             <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
               <h4 className="fw-bold text-dark m-0">
                 Key Performance Indicators
@@ -228,7 +210,6 @@ function CreateProject() {
                 + Add KPI Metric
               </button>
             </div>
-            {/* KPI LIST */}
             {kpis.map((kpi, index) => (
               <div
                 className="card border-0 shadow-sm mb-4 rounded-3 border-start border-primary border-3"
@@ -248,7 +229,6 @@ function CreateProject() {
                   ></button>
                 </div>
                 <div className="card-body p-4">
-                  {/* KPI NAME + OWNER */}
                   <div className="row g-3 mb-3">
                     <div className="col-md-6">
                       <label className="form-label small text-muted fw-medium">
@@ -283,7 +263,6 @@ function CreateProject() {
                       />
                     </div>
                   </div>
-                  {/* DESCRIPTION */}
                   <div className="mb-3">
                     <label className="form-label small text-muted fw-medium">
                       Metric Description
@@ -303,9 +282,7 @@ function CreateProject() {
                       required
                     />
                   </div>
-                  {/* VALUES */}
                   <div className="row g-3">
-                    {/* CURRENT */}
                     <div className="col-4">
                       <label className="form-label small text-muted fw-medium">
                         Current Value (Numeric)
@@ -331,7 +308,6 @@ function CreateProject() {
                         required
                       />
                     </div>
-                    {/* TARGET */}
                     <div className="col-4">
                       <label className="form-label small text-muted fw-medium">
                         Target Value (Numeric)
@@ -357,7 +333,6 @@ function CreateProject() {
                         required
                       />
                     </div>
-                    {/* STATUS */}
                     <div className="col-4">
                       <label className="form-label small text-muted fw-medium">
                         Initial Status
@@ -384,11 +359,35 @@ function CreateProject() {
                         </option>
                       </select>
                     </div>
+
+                    <div className="col-12 mt-2">
+  <div className="form-check">
+    <input
+      className="form-check-input"
+      type="checkbox"
+      checked={kpi.is_min_kpi || false}
+      onChange={(e) =>
+        handleKPIChange(
+          index,
+          'is_min_kpi',
+          e.target.checked
+        )
+      }
+      style={{border: '1px solid black'}}
+      id={`minKpi-${index}`}
+    />
+    <label
+      className="form-check-label small text-muted fw-medium"
+      htmlFor={`minKpi-${index}`}
+    >
+      Is this a MINIMIZE KPI? (lower value is better)
+    </label>
+  </div>
+</div>
                   </div>
                 </div>
               </div>
             ))}
-            {/* EMPTY KPI */}
             {kpis.length === 0 && (
               <div className="text-center p-4 border rounded-3 bg-white mb-4 text-muted small">
                 No KPIs linked yet.
@@ -396,7 +395,6 @@ function CreateProject() {
                 to begin attaching target parameters.
               </div>
             )}
-            {/* ACTIONS */}
             <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
               <button
                 type="button"
